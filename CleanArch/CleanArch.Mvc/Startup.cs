@@ -1,3 +1,4 @@
+using CleanArch.Infra.Data.Context;
 using CleanArch.Mvc.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,9 +28,16 @@ namespace CleanArch.Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("UniversityIdentityDBConnection");
+            var identityDbConnectionString = Configuration.GetConnectionString("UniversityIdentityDBConnection");
+            var universityDbConnectionString = Configuration.GetConnectionString("UniversityDBConnection");
+            // Identity Db Connection mysql
             services.AddDbContextPool<ApplicationDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+            options.UseMySql(identityDbConnectionString, ServerVersion.AutoDetect(identityDbConnectionString)));
+            // University Db Connection mysql
+            services.AddDbContext<UniversityDbContext>(options =>
+            {
+                options.UseMySql(universityDbConnectionString, ServerVersion.AutoDetect(universityDbConnectionString));
+            });
             /*services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("UniversityIdentityDBConnection")));*/
